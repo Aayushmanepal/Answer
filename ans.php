@@ -3,54 +3,59 @@
 $awardcsv = fopen("awards.csv", "r");
 $contractcsv = fopen("contracts.csv", "r");
 
+
+
+
 while (($data = fgetcsv($awardcsv, 0))) {
 
-$awards[]= $data;
+    $awards[] = $data;
 }
 
 while (($data = fgetcsv($contractcsv, 0))) {
 
-$contracts[] = $data;
+    $contracts[] = $data;
 }
 
 $total = 0;
 
+
 for ($i = 0; $i < count($contracts); $i++) {
-    
-$result[$i] = null;
-for ($j = 0; $j < count($awards); $j++) {
 
-if ($i == 0 && $j == 0) {
-unset($awards[0][0]);
-$result[$i] = array_merge($contracts[$i], $awards[$j]);
-break;
-} 
+    $result[$i] = null;
+    for ($j = 0; $j < count($awards); $j++) {
 
- else if
-    ($contracts[$i][0] == $awards[$j][0]){
-unset($awards[$j][0]);
-$result[$i] = array_merge($contracts[$i], $awards[$j]);
-if ($contracts[$i][1] == 'Current') {
+        if ($i == 0 && $j == 0) {
+            unset($awards[0][0]);
+            $result[$i] = array_merge($contracts[$i], $awards[$j]);
+            break;
+        } else if ($contracts[$i][0] == $awards[$j][0]) {
 
-$total += $awards[$j][5];
+            unset($awards[$j][0]);
+            $result[$i] = array_merge($contracts[$i], $awards[$j]);
+            if ($contracts[$i][1] == 'Current') {
+
+                $total += $awards[$j][5];
+            }
+            break;
+        }
+    }
+
+    if (is_null($result[$i]))		
+        $result[$i] = $contracts[$i];
+		
+		for($k = count($result[$i]); $k<count($result[0]); $k++){
+			$result[$i][$k]=null;
+		}
 }
-break;
-}
-}
-
-if (is_null($result[$i])){
-
-$result[$i] = $contracts[$i];
-}
 
 
-$finalcsv = fopen('result.csv', 'w');
+$finalcsv = fopen('final.csv', 'w');
 
 foreach ($result as $r) {
 
-fputcsv($finalcsv, $r);
-}
+    fputcsv($finalcsv, $r);
 }
 
-echo "Total amount of current contracts: " . $total;
+
+echo "Total amount of current contract: " . $total;
 ?>
